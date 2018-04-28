@@ -42,8 +42,11 @@ class DNA
 	void mutation()
 	{
 		foreach (i; 0 .. this.genes.length)
-			if (uniform(0.0, 1.0) < 0.1)
+		{
+			auto val = uniform(0, 100);
+			if (val < 5)
 				this.genes[i] = this.newGene();
+		}
 	}
 
 	Vector2f newGene()
@@ -80,7 +83,7 @@ class Rocket
 
 		this.displaySize = displaySize;
 
-		this.size = Vector2f(25, 3);
+		this.size = Vector2f(10, 1);
 		this.rocket.size = this.size;
 
 		this.pos = Vector2f(this.displaySize.x / 2, this.displaySize.y);
@@ -104,7 +107,8 @@ class Rocket
 
 	void draw(RenderWindow window)
 	{
-		window.draw(this.rocket);
+		//Uncomment to see the rockets
+		//window.draw(this.rocket);
 		window.draw(this.path, PrimitiveType.LinesStrip);
 	}
 
@@ -130,7 +134,7 @@ class Rocket
 			this.rocket = rotateCenter!RectangleShape(this.rocket,
 				getHeading!Vector2f(this.vel));
 			this.rocket.position = this.pos;
-			this.path ~= Vertex(this.pos, Color(0, 255, 0, 150));
+			this.path ~= Vertex(this.pos, Color(0, 255, 0, 50));
 		}
 	}
 
@@ -139,7 +143,7 @@ class Rocket
 		float d = dist!Vector2f(this.pos, targetPos);
 		this.fitness = map(d, 0, this.displaySize.x, this.displaySize.x, 0);
 		if (this.reached)
-			this.fitness *= 10;
+			this.fitness *= 50;
 		else if (this.hitob)
 			this.fitness /= 10;
 	}

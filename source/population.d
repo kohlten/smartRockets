@@ -12,7 +12,7 @@ import helpFuncs;
 
 class Population
 {
-	immutable int	popsize = 500;
+	immutable int	popsize = 1000;
 	Rocket[popsize]	rockets;
 	Rocket[]		matingPool;
 	Vector2i		displaySize;
@@ -38,27 +38,46 @@ class Population
 
 	void evaluate(Vector2f targetPos)
 	{
-		float maxfit;
-		float maxlen;
+		float maxfit = 0;
+		float maxlen = 0;
+		float leastlen = 0;
 
 		foreach (i; 0 .. this.popsize)
 		{
 			this.rockets[i].calcFitness(targetPos);
-			if (this.rockets[i].fitness > maxfit)
+			if (this.rockets[i].fitness > maxfit || maxfit == 0)
 				maxfit = this.rockets[i].fitness;
+			if (this.rockets[i].reached && (this.rockets[i].fitness < leastlen || leastlen == 0))
+				leastlen = this.rockets[i].path.length;
 			if (this.rockets[i].path.length > maxlen)
 				maxlen = this.rockets[i].path.length;
 		}
 
 		this.matingPool = [];
+		float low = 0;
+		float high = 0;
+		float average = 0;
+		float num = 0;
+		writeln("Least len: ", leastlen);
 		foreach (i; 0 .. this.popsize)
 		{
-			float n = this.rockets[i].fitness * 100;
-			if (this.rockets[i].path.length > maxlen - 50 && this.rockets[i].reached)
-				n += maxlen - this.rockets[i].path.length;
+			float n = this.rockets[i].fitness * 10;
+			if (this.rockets[i].path.length < leastlen + 150 && this.rockets[i].reached)
+				n += this.rockets[i].path.length * 10;
+			if (n <= 0)
+				n = 0;
+			if (n < low || low == 0)
+				low = n;
+			if (n > high || high == 0)
+				high = n;
+			average += n;
 			foreach (j; 0 .. n)
 				this.matingPool ~= this.rockets[i];
+			num++;
 		}
+		writeln("Low: ", low);
+		writeln("High: ", high);
+		writeln("Average: ", average / num);
 	}
 
 	void selection()
@@ -78,9 +97,12 @@ class Population
 
 	bool done()
 	{
+		int amount;
 		foreach (rocket; rockets)
 			if (!rocket.reached && !rocket.hitob)
-				return false;
-		return true;
+				amount++;
+		if (amount == 0)
+			return true;
+		return false;
 	}
 }

@@ -28,7 +28,7 @@ class Game
 	this()
 	{
 		this.color	 = 	Color(0, 0, 0);
-		this.size  	 =	Vector2i(800, 600);
+		this.size  	 =	Vector2i(1200, 800);
 
 		this.options = 	new ContextSettings();
 		this.options.antialiasingLevel = 8;
@@ -38,26 +38,30 @@ class Game
 		this.target  = 	new CircleShape(6);
 		this.clock 	 = 	new Clock();
 
-		foreach (i; 0 .. 5)
+		foreach (i; 0 .. 7)
 			this.obs ~= new RectangleShape();
 		this.target.position  = Vector2f(this.size.x / 2 - 6, 50);
 		this.target.fillColor = Color(255, 0, 0);
 
 		this.obs[0].size = Vector2f(this.size.x / 2, 10);
-		this.obs[0].position = Vector2f((this.size.x / 2) - (this.obs[0].size.x / 2), this.size.y / 3);
+		this.obs[0].position = Vector2f((this.size.x / 2) - (this.obs[0].size.x / 2), this.size.y / 4);
 
 		this.obs[1].size = Vector2f(this.size.x, 5);
-		this.obs[2].size = Vector2f(5, this.size.y);
-		this.obs[3].size = Vector2f(10, this.size.y);
+		this.obs[2].size = Vector2f(1, this.size.y + 100);
+		this.obs[3].size = Vector2f(1, this.size.y + 100);
 		this.obs[4].size = Vector2f(this.size.x, 10);
+		this.obs[5].size = Vector2f(this.size.x / 3, 10);
+		this.obs[6].size = Vector2f(this.size.x / 3, 10);
 
 		this.obs[3].position = Vector2f(this.size.x, 0);
-		this.obs[4].position = Vector2f(0, this.size.y + 100);
+		this.obs[4].position = Vector2f(-10, this.size.y + 100);
+		this.obs[5].position = Vector2f(0, this.size.y / 2);
+		this.obs[6].position = Vector2f(this.size.x - (this.size.x / 3), this.size.y / 2);
 
-		foreach (i; 0 .. 5)
-			this.obs[0].fillColor = Color(255, 255, 255);
+		foreach (i; 0 .. 7)
+			this.obs[i].fillColor = Color(255, 255, 255);
 
-		this.window.setFramerateLimit(120);
+		this.window.setFramerateLimit(500);
 
 		last = clock.getElapsedTime();
 	}
@@ -76,19 +80,20 @@ class Game
 				this.iter++;
 			}
 
-			/*Duration current = clock.getElapsedTime();
+			Duration current = clock.getElapsedTime();
 			if ((current - last).total!"seconds" >= 1)
 			{
 				writeln(frames);
 				last = current;
 				frames = 0;
-			}*/
+			}
 			
 			this.window.clear(this.color);
 
-			this.window.draw(this.target);
-			foreach (ob; this.obs)
-				this.window.draw(ob);
+			//Uncomment if you want to see the obstructions
+			//this.window.draw(this.target);
+			//foreach (ob; this.obs)
+			//	this.window.draw(ob);
 			this.pop.run(this.frames, this.window, this.target, this.obs);
 			this.window.display();
 
